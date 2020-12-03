@@ -1,0 +1,22 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "Advent of Code 2020",
+  "main": "index.js",
+  "scripts": {
+    "build": "NODE_ENV=development npx parcel build src/main.js --target node --no-source-maps --out-dir ./ --out-file solve.js",
+    "build:test": "NODE_ENV=development npx parcel build src/main.js --target node --no-source-maps --no-minify --out-dir ./ --out-file solve.js",
+    "solve:test": "npm run build:test && node solve",
+    "solve": "npm run build && node ./solve.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "node-elm-compiler": "^5.0.5",
+    "parcel-bundler": "^1.12.4"
+  },
+  "dependencies": {
+    "command-line-args": "^5.1.1",
+    "node-fetch": "^2.6.0"
+  }
+}

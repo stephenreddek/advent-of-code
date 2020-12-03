@@ -1,0 +1,6 @@
+.cache/
+.idea/
+data/
+elm-stuff/
+node_modules/
+*.iml
