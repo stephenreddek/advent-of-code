@@ -4,3 +4,4 @@ data/
 elm-stuff/
 node_modules/
 *.iml
+solve.js
