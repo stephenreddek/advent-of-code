@@ -31,7 +31,7 @@ parseInput input =
 --
 inputParser : Parser (List String)
 inputParser =
-  Parser.loop [] <| (\xs ->
+  Parser.loop [] (\xs ->
       Parser.oneOf
         [ Parser.succeed (\x -> Loop (x :: xs))
             |= Parser.getChompedString (Parser.chompUntil "\n")

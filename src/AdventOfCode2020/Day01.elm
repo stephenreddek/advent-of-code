@@ -18,7 +18,7 @@ parseInput input =
 --
 inputParser : Parser (List Int)
 inputParser =
-  Parser.loop [] <| (\xs ->
+  Parser.loop [] (\xs ->
     Parser.oneOf
       [ Parser.succeed (\x -> Loop (x :: xs))
           |= Parser.int

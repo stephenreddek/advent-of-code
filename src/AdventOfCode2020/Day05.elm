@@ -18,7 +18,7 @@ parseInput input =
 --
 inputParser : Parser (List String)
 inputParser =
-  Parser.loop [] <| (\xs ->
+  Parser.loop [] (\xs ->
       Parser.oneOf
         [ Parser.succeed (\_ -> Done (List.reverse xs))
             |= Parser.end

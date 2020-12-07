@@ -24,7 +24,7 @@ parseInput input =
 --
 inputParser : Parser (List Policy)
 inputParser =
-  Parser.loop [] <| (\xs ->
+  Parser.loop [] (\xs ->
       Parser.oneOf
         [ Parser.succeed (\min max char password -> Loop ({ char = char, min = min, max = max, password = password } :: xs))
             |= Parser.int
