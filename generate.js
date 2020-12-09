@@ -46,10 +46,12 @@ inputParser =
 part1 : String -> Result String Int
 part1 input =
     parseInput input
+        |> Result.map (always 0)
 
 part2 : String -> Result String Int
 part2 input =
     parseInput input
+        |> Result.map (always 0)
 `
 
 // -----------------------------------------------------------------------------
