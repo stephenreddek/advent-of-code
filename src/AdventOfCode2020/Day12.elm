@@ -22,6 +22,12 @@ type Angle
 type Direction
     = Direction Int
 
+
+type alias State =
+    { shipPosition : (Int, Int)
+    , waypointOffset : (Int, Int)
+    }
+
 -- Input -----------------------------------------------------------------------
 --
 parseInput : String -> Result String (List Action)
@@ -124,16 +130,16 @@ invert (Angle angle) =
 
 turn : Angle -> Direction -> Direction
 turn (Angle angle) (Direction direction) =
-    standardizeAngle (Direction (angle + direction))
+    standardizeDirection (Direction (angle + direction))
 
 
-standardizeAngle : Direction -> Direction
-standardizeAngle (Direction direction) =
+standardizeDirection : Direction -> Direction
+standardizeDirection (Direction direction) =
     if direction > 0 then
         Direction (modBy 360 direction)
 
     else
-        standardizeAngle (Direction (direction + 360))
+        standardizeDirection (Direction (direction + 360))
 
 
 manhattanDistance : (Int, Int, Direction) -> Int
@@ -145,6 +151,102 @@ facingEast : Direction
 facingEast =
     Direction 0
 
+-- Part2 Functions -------------------------------------------------------------
+followPart2Directions : State -> List Action -> State
+followPart2Directions state actions =
+    case actions of
+        [] ->
+            state
+
+        action :: remaining ->
+            followPart2Directions (processPart2Action state action) remaining
+
+
+processPart2Action : State -> Action -> State
+processPart2Action state action =
+    case action of
+        North amount ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (Tuple.first state.waypointOffset, Tuple.second state.waypointOffset + amount)
+            }
+
+        South amount ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (Tuple.first state.waypointOffset, Tuple.second state.waypointOffset - amount)
+            }
+
+        East amount ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (Tuple.first state.waypointOffset + amount, Tuple.second state.waypointOffset)
+            }
+
+        West amount ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (Tuple.first state.waypointOffset - amount, Tuple.second state.waypointOffset)
+            }
+
+        TurnLeft angle ->
+            rotateWaypoint angle state
+
+        TurnRight angle ->
+            rotateWaypoint (invert angle) state
+
+        Forward amount ->
+            let
+                (shipX, shipY) =
+                    state.shipPosition
+
+                (waypointX, waypointY) =
+                    state.waypointOffset
+            in
+            { shipPosition = (shipX + (amount * waypointX), shipY + (amount * waypointY))
+            , waypointOffset = state.waypointOffset
+            }
+
+
+rotateWaypoint : Angle -> State -> State
+rotateWaypoint angle state =
+    let
+        (x, y) =
+            state.waypointOffset
+    in
+    case standardizeAngle angle of
+        Angle 90 ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (-y, x)
+            }
+
+        Angle 180 ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (-x, -y)
+            }
+
+        Angle 270 ->
+            { shipPosition = state.shipPosition
+            , waypointOffset = (y, -x)
+            }
+
+        _ ->
+            state
+
+
+standardizeAngle : Angle -> Angle
+standardizeAngle (Angle angle) =
+    if angle > 0 then
+        Angle (modBy 360 angle)
+
+    else
+        standardizeAngle (Angle (angle + 360))
+
+
+manhattanDistanceForState : State -> Int
+manhattanDistanceForState { shipPosition } =
+    let
+        (x, y) =
+            shipPosition
+    in
+    abs x + abs y
+
 -- Solvers ---------------------------------------------------------------------
 part1 : String -> Result String Int
 part1 input =
@@ -154,4 +256,4 @@ part1 input =
 part2 : String -> Result String Int
 part2 input =
     parseInput input
-        |> Result.map (always 0)
+        |> Result.map (followPart2Directions { shipPosition = (0,0), waypointOffset = (10, 1) } >> manhattanDistanceForState)
