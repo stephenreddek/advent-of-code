@@ -1,9 +1,10 @@
-module AdventOfCode2020.Day14 exposing (part1, part2)
+module AdventOfCode2020.Day14 exposing (..)
 
 -- Imports ---------------------------------------------------------------------
 import Basics.Extra as Basics
 import Binary exposing (Bits)
 import Dict exposing (Dict)
+import List.Extra
 import Parser exposing (Parser, Trailing (..), Step (..), (|.), (|=))
 import Util.Parser
 
@@ -15,6 +16,12 @@ type alias State =
 
 
 type alias Mask =
+    { floating : List Int
+    , ones : Bits
+    }
+
+
+type alias AddressMask =
     { zeros : Bits
     , ones : Bits
     }
@@ -57,15 +64,23 @@ inputParser =
 
 toMask : String -> Mask
 toMask string =
-    { ones = Binary.fromIntegers (List.map (\char -> if char == '1' then 1 else 0) (String.toList string))
-    , zeros = Binary.fromIntegers (List.map (\char -> if char == '0' then 0 else 1) (String.toList string))
+    { floating = string
+        |> String.toList
+        |> List.reverse
+        |> List.Extra.indexedFoldr (\index char acc ->
+                if char == 'X' then
+                    index :: acc
+                else
+                    acc
+            ) []
+    , ones = Binary.fromIntegers (List.map (\char -> if char == '1' then 1 else 0) (String.toList string))
     }
 
 
 -- Functions -------------------------------------------------------------------
 initialState : State
 initialState =
-    State { zeros = Binary.empty, ones = Binary.empty } Dict.empty
+    State { floating = [], ones = Binary.empty } Dict.empty
 
 runProgram : State -> List Operation -> State
 runProgram memory operations =
@@ -79,13 +94,71 @@ doOperation operation state =
 
 
         SetValueAt address value ->
-            { state | memory = Dict.insert address (applyMask state.mask value) state.memory }
+            let
+                enumeratedAddresses =
+                    addressesFromFloating state address
+            in
+            List.foldl (\addressOption -> setValue { address = addressOption, value = value } ) state enumeratedAddresses
 
 
-applyMask : Mask -> Int -> Int
-applyMask mask value =
-    (Binary.fromDecimal value)
-        |> Binary.and mask.zeros
+addressesFromFloating : State -> Int -> List Int
+addressesFromFloating state address =
+    let
+        addressWithOnesApplied =
+            applyOnesMask state.mask address
+    in
+    state.mask.floating
+        |> generateFloatingAddressMasks
+        |> List.map (applyAddressMask addressWithOnesApplied)
+
+
+generateFloatingAddressMasks : List Int -> List AddressMask
+generateFloatingAddressMasks floatingIndexes =
+    floatingIndexes
+        |> List.Extra.subsequences
+        |> List.map (\indexesThatShouldBeOnes -> createAddressMask { indexesThatShouldBeOnes = indexesThatShouldBeOnes, allFloatingAddresses = floatingIndexes })
+
+
+createAddressMask : { indexesThatShouldBeOnes : List Int, allFloatingAddresses : List Int } -> AddressMask
+createAddressMask { indexesThatShouldBeOnes, allFloatingAddresses } =
+    let
+        indexesThatShouldBeZeros =
+            allFloatingAddresses
+                |> List.filter (\index -> List.member index indexesThatShouldBeOnes |> not)
+    in
+    { ones =
+        List.repeat 36 0
+            |> List.indexedMap (\index _ -> if List.member index indexesThatShouldBeOnes then 1 else 0)
+            |> List.reverse
+            |> Binary.fromIntegers
+    , zeros =
+        List.repeat 36 0
+            |> List.indexedMap (\index _ -> if List.member index indexesThatShouldBeZeros then 0 else 1)
+            |> List.reverse
+            |> Binary.fromIntegers
+    }
+-- 2710825158441
+
+setValue : { value : Int, address : Int} -> State -> State
+setValue { value, address } state =
+    { state | memory = Dict.insert address value state.memory }
+
+
+applyAddressMask : Int -> AddressMask -> Int
+applyAddressMask int addressMask =
+    int
+        |> Binary.fromDecimal
+        |> Binary.ensureSize 36
+        |> Binary.or addressMask.ones
+        |> Binary.and addressMask.zeros
+        |> Binary.toDecimal
+
+
+applyOnesMask : Mask -> Int -> Int
+applyOnesMask mask address =
+    address
+        |> Binary.fromDecimal
+        |> Binary.ensureSize 36
         |> Binary.or mask.ones
         |> Binary.toDecimal
 
@@ -105,4 +178,4 @@ part1 input =
 part2 : String -> Result String Int
 part2 input =
     parseInput input
-        |> Result.map (always 0)
+        |> Result.map (runProgram initialState >> sumValues)
