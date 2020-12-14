@@ -31,11 +31,11 @@ inputParser : Parser (List String)
 inputParser =
     Parser.loop [] (\xs ->
         Parser.oneOf
-            [ Parser.succeed (\x -> Loop (x :: xs))
+            [ Parser.succeed (Done (List.reverse xs))
+              |. Parser.end
+            , Parser.succeed (\x -> Loop (x :: xs))
                 |= Parser.getChompedString (Parser.chompUntil "\n")
                 |. Parser.token "\n"
-            , Parser.succeed (\_ -> Done (List.reverse xs))
-                |= Parser.end
             ]
    )
 
