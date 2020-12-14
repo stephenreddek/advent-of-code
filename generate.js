@@ -22,21 +22,21 @@ import Util.Parser
 --
 parseInput : String -> Result String (List String)
 parseInput input =
-  Parser.run inputParser input
-      |> Result.map (identity)
-      |> Result.mapError Util.Parser.deadEndsToString
+    Parser.run inputParser input
+        |> Result.map (identity)
+        |> Result.mapError Util.Parser.deadEndsToString
 
 --
 inputParser : Parser (List String)
 inputParser =
-  Parser.loop [] (\\xs ->
-      Parser.oneOf
-        [ Parser.succeed (\\x -> Loop (x :: xs))
-            |= Parser.getChompedString (Parser.chompUntil "\\n")
-            |. Parser.token "\\n"
-        , Parser.succeed (\\_ -> Done (List.reverse xs))
-            |= Parser.end
-        ]
+    Parser.loop [] (\xs ->
+        Parser.oneOf
+            [ Parser.succeed (\x -> Loop (x :: xs))
+                |= Parser.getChompedString (Parser.chompUntil "\n")
+                |. Parser.token "\n"
+            , Parser.succeed (\_ -> Done (List.reverse xs))
+                |= Parser.end
+            ]
    )
 
 -- Functions -------------------------------------------------------------------
