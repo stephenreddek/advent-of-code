@@ -21,7 +21,7 @@ type alias Mask =
     }
 
 
-type alias AddressMask =
+type alias FloatingAddressMask =
     { zeros : Bits
     , ones : Bits
     }
@@ -98,18 +98,18 @@ addressesFromFloating : State -> Int -> List Int
 addressesFromFloating state address =
     state.mask.floating
         |> generateFloatingAddressMasks
-        |> List.map (applyAddressMask address state.mask)
+        |> List.map (applyFloatingAddressMask address state.mask)
 
 
-generateFloatingAddressMasks : List Int -> List AddressMask
+generateFloatingAddressMasks : List Int -> List FloatingAddressMask
 generateFloatingAddressMasks floatingIndexes =
     floatingIndexes
         |> List.Extra.subsequences
-        |> List.map (\indexesThatShouldBeOnes -> createAddressMask { indexesThatShouldBeOnes = indexesThatShouldBeOnes, allFloatingAddresses = floatingIndexes })
+        |> List.map (\indexesThatShouldBeOnes -> createFloatingAddressMask { indexesThatShouldBeOnes = indexesThatShouldBeOnes, allFloatingAddresses = floatingIndexes })
 
 
-createAddressMask : { indexesThatShouldBeOnes : List Int, allFloatingAddresses : List Int } -> AddressMask
-createAddressMask { indexesThatShouldBeOnes, allFloatingAddresses } =
+createFloatingAddressMask : { indexesThatShouldBeOnes : List Int, allFloatingAddresses : List Int } -> FloatingAddressMask
+createFloatingAddressMask { indexesThatShouldBeOnes, allFloatingAddresses } =
     let
         indexesThatShouldBeZeros =
             allFloatingAddresses
@@ -133,8 +133,8 @@ setValue { value, address } state =
     { state | memory = Dict.insert address value state.memory }
 
 
-applyAddressMask : Int -> Mask -> AddressMask -> Int
-applyAddressMask int mask addressMask  =
+applyFloatingAddressMask : Int -> Mask -> FloatingAddressMask -> Int
+applyFloatingAddressMask int mask addressMask  =
     int
         |> Binary.fromDecimal
         |> Binary.ensureSize 36

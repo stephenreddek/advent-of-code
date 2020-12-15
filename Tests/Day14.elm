@@ -76,7 +76,7 @@ suite =
               in
               Expect.equal expected actual
             ]
-        , describe "createAddressMask"
+        , describe "createFloatingAddressMask"
             [ test "the example" <|
                 \_ ->
                 let
@@ -86,7 +86,7 @@ suite =
                         }
 
                     actual =
-                        createAddressMask { indexesThatShouldBeOnes = [1,3], allFloatingAddresses = [0,1,3] }
+                        createFloatingAddressMask { indexesThatShouldBeOnes = [1,3], allFloatingAddresses = [0,1,3] }
                 in
                 Expect.equal expected actual
             , test "when there are not floating" <|
@@ -98,11 +98,11 @@ suite =
                           }
 
                       actual =
-                          createAddressMask { indexesThatShouldBeOnes = [], allFloatingAddresses = [] }
+                          createFloatingAddressMask { indexesThatShouldBeOnes = [], allFloatingAddresses = [] }
                   in
                   Expect.equal expected actual
             ]
-        , describe "applyAddressMask"
+        , describe "applyFloatingAddressMask"
             [ test "the example [26]" <|
                 \_ ->
                 let
@@ -115,7 +115,7 @@ suite =
                         26
 
                     actual =
-                        applyAddressMask 26 addressMask
+                        applyFloatingAddressMask 26 { floating = [0, 1, 3], ones = Binary.empty } addressMask
                 in
                 Expect.equal expected actual
             , test "the example [19]" <|
@@ -130,7 +130,7 @@ suite =
                           19
 
                       actual =
-                          applyAddressMask 26 addressMask
+                          applyFloatingAddressMask 26 { floating = [0, 1, 3], ones = Binary.empty } addressMask
                   in
                   Expect.equal expected actual
             ]
