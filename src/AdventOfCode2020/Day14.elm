@@ -65,15 +65,9 @@ inputParser =
 toMask : String -> Mask
 toMask string =
     { floating = string
-        |> String.toList
-        |> List.reverse
-        |> List.Extra.indexedFoldr (\index char acc ->
-                if char == 'X' then
-                    index :: acc
-                else
-                    acc
-            ) []
-    , ones = Binary.fromIntegers (List.map (\char -> if char == '1' then 1 else 0) (String.toList string))
+        |> String.reverse
+        |> String.indexes "X"
+    , ones = Binary.ensureSize 36 <| Binary.fromIntegers (List.map (\char -> if char == '1' then 1 else 0) (String.toList string))
     }
 
 
@@ -92,7 +86,6 @@ doOperation operation state =
         SetMask mask ->
             { state | mask = mask }
 
-
         SetValueAt address value ->
             let
                 enumeratedAddresses =
@@ -103,13 +96,9 @@ doOperation operation state =
 
 addressesFromFloating : State -> Int -> List Int
 addressesFromFloating state address =
-    let
-        addressWithOnesApplied =
-            applyOnesMask state.mask address
-    in
     state.mask.floating
         |> generateFloatingAddressMasks
-        |> List.map (applyAddressMask addressWithOnesApplied)
+        |> List.map (applyAddressMask address state.mask)
 
 
 generateFloatingAddressMasks : List Int -> List AddressMask
@@ -127,30 +116,31 @@ createAddressMask { indexesThatShouldBeOnes, allFloatingAddresses } =
                 |> List.filter (\index -> List.member index indexesThatShouldBeOnes |> not)
     in
     { ones =
-        List.repeat 36 0
-            |> List.indexedMap (\index _ -> if List.member index indexesThatShouldBeOnes then 1 else 0)
+        List.foldl (\index bitMask -> List.Extra.setAt index 1 bitMask ) (List.repeat 36 0) indexesThatShouldBeOnes
             |> List.reverse
             |> Binary.fromIntegers
+            |> Binary.ensureSize 36
     , zeros =
-        List.repeat 36 0
-            |> List.indexedMap (\index _ -> if List.member index indexesThatShouldBeZeros then 0 else 1)
+        List.foldl (\index bitMask -> List.Extra.setAt index 0 bitMask ) (List.repeat 36 1) indexesThatShouldBeZeros
             |> List.reverse
             |> Binary.fromIntegers
+            |> Binary.ensureSize 36
     }
--- 2710825158441
+
 
 setValue : { value : Int, address : Int} -> State -> State
 setValue { value, address } state =
     { state | memory = Dict.insert address value state.memory }
 
 
-applyAddressMask : Int -> AddressMask -> Int
-applyAddressMask int addressMask =
+applyAddressMask : Int -> Mask -> AddressMask -> Int
+applyAddressMask int mask addressMask  =
     int
         |> Binary.fromDecimal
         |> Binary.ensureSize 36
-        |> Binary.or addressMask.ones
         |> Binary.and addressMask.zeros
+        |> Binary.or addressMask.ones
+        |> Binary.or mask.ones
         |> Binary.toDecimal
 
 
@@ -179,3 +169,8 @@ part2 : String -> Result String Int
 part2 input =
     parseInput input
         |> Result.map (runProgram initialState >> sumValues)
+
+
+-- 2792825529595
+-- 2710825158441
+-- 3816594901962 -- right answer

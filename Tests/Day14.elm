@@ -89,6 +89,18 @@ suite =
                         createAddressMask { indexesThatShouldBeOnes = [1,3], allFloatingAddresses = [0,1,3] }
                 in
                 Expect.equal expected actual
+            , test "when there are not floating" <|
+                  \_ ->
+                  let
+                      expected =
+                          { zeros = Binary.fromIntegers [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+                          , ones = Binary.fromIntegers [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                          }
+
+                      actual =
+                          createAddressMask { indexesThatShouldBeOnes = [], allFloatingAddresses = [] }
+                  in
+                  Expect.equal expected actual
             ]
         , describe "applyAddressMask"
             [ test "the example [26]" <|
