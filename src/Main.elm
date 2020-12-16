@@ -17,6 +17,7 @@ import AdventOfCode2020.Day12
 import AdventOfCode2020.Day13
 import AdventOfCode2020.Day14
 import AdventOfCode2020.Day15
+import AdventOfCode2020.Day16
 -- << INJECT 2020 IMPORT >>
 
 import Dict exposing (Dict)
@@ -94,6 +95,8 @@ answerMap =
     , Tuple.pair (14, 2, 2020) AdventOfCode2020.Day14.part2
     , Tuple.pair (15, 1, 2020) AdventOfCode2020.Day15.part1
     , Tuple.pair (15, 2, 2020) AdventOfCode2020.Day15.part2
+    , Tuple.pair (16, 1, 2020) AdventOfCode2020.Day16.part1
+    , Tuple.pair (16, 2, 2020) AdventOfCode2020.Day16.part2
     ] -- << INJECT 2020 SOLUTION >>
 
 -- Update ----------------------------------------------------------------------
