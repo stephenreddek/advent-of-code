@@ -14,7 +14,8 @@
             "elm-community/basics-extra": "4.0.0",
             "elm-community/list-extra": "8.2.2",
             "elm-community/maybe-extra": "5.2.0",
-            "icidasset/elm-binary": "2.1.0"
+            "icidasset/elm-binary": "2.1.0",
+            "joneshf/elm-tagged": "2.1.1"
         },
         "indirect": {
             "rtfeldman/elm-hex": "1.0.0"
