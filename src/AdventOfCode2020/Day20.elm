@@ -89,12 +89,12 @@ calculateNumericRepresentation pixels =
 
         side3 =
             Array.map (Array.get (sideLength - 1)) pixels
-                |> (Array.toList >> List.map (Maybe.withDefault False) >> Binary.fromBooleans >> Binary.toDecimal)
+                |> (Array.toList >> List.reverse >> List.map (Maybe.withDefault False) >> Binary.fromBooleans >> Binary.toDecimal)
                 |> Tagged.tag
 
         side4 =
             Array.get (sideLength - 1) pixels
-                |> Maybe.map (Array.toList >> Binary.fromBooleans >> Binary.toDecimal)
+                |> Maybe.map (Array.toList >> List.reverse >> Binary.fromBooleans >> Binary.toDecimal)
                 |> Maybe.withDefault 0
                 |> Tagged.tag
     in
@@ -349,17 +349,18 @@ assembleGrid images =
 
     in
     case starting of
-        --Ok _ ->
-        --    starting
         beginning :: otherOptions ->
             --Ok (Dict.insert (0,0) beginning Dict.empty)
             assembleGridHelp imagesById (Tagged.Dict.remove beginning.image.id imagesById) (1,0) beginning (Dict.insert (0,0) beginning Dict.empty)
 
         [] ->
             Err "No images with only 2 matches"
-        --
+
         --Ok multipleOptions ->
         --    Err (List.length multipleOptions |> String.fromInt |> (++) "number of starting options: ")
+
+        --Ok _ ->
+        --    starting
 
         --Err err ->
         --    Err err
@@ -421,11 +422,11 @@ assembleGridHelp allImages imagesById (x, y) prev acc =
         -- the previous and all that are messed up...
         -- insert one that matches to the right number of prev
         --case Maybe.andThen (\matching -> getMatchingImageForSide imagesById matching prev.side.right) (Tagged.Dict.get prev.image.id matchingSquares) of
-        case (Tagged.Dict.values (Tagged.Dict.filter (\_ image -> matchesOnOneSide prev.side.right image) imagesById)) of
+        case (Tagged.Dict.values (Tagged.Dict.filter (\_ image -> matchesOnOneSide (flipNumber prev.side.right) image) imagesById)) of
             image :: [] ->
                 let
                     thisMatch =
-                        orientToSideWithValueOf .left prev.side.right image
+                        orientToSideWithValueOf .left (flipNumber prev.side.right) image
 
                     prevMatchForNewLine =
                         Dict.get (0,y) acc
@@ -438,17 +439,17 @@ assembleGridHelp allImages imagesById (x, y) prev acc =
                 Err "1. found too many!!!"
             [] ->
                 Err ("1. Could not find a match to go at position (" ++ String.fromInt x ++ ", " ++ String.fromInt y ++ ") and after image " ++ (displayImageSides prev.image)
-                        ++ ". trying to find: " ++ String.fromInt (Tagged.untag prev.side.right)
+                        ++ ". trying to find: " ++ String.fromInt (Tagged.untag (flipNumber prev.side.right))
                     ++ "\nfound so far:\n" ++ printOutImageIdsInSolution acc)
      else if x == 0 then
         --insert one that matches to the bottom of prev
-        case (Tagged.Dict.values (Tagged.Dict.filter (\_ image -> matchesOnOneSide prev.side.bottom image) imagesById)) of
-        --case Maybe.andThen (\matching -> getMatchingImageForSide imagesById matching prev.side.bottom) (Tagged.Dict.get prev.image.id matchingSquares) of
-        --case List.Extra.find (matchesOnOneSide prev.side.bottom) (getMatchingImages matchingSquares imagesById prev) of
+        case (Tagged.Dict.values (Tagged.Dict.filter (\_ image -> matchesOnOneSide (flipNumber prev.side.bottom) image) imagesById)) of
+        --case Maybe.andThen (\matching -> getMatchingImageForSide imagesById matching (flipNumber prev.side.bottom)) (Tagged.Dict.get prev.image.id matchingSquares) of
+        --case List.Extra.find (matchesOnOneSide (flipNumber prev.side.bottom)) (getMatchingImages matchingSquares imagesById prev) of
             image :: [] ->
                 let
                     thisMatch =
-                        orientToSideWithValueOf .top prev.side.bottom image
+                        orientToSideWithValueOf .top (flipNumber prev.side.bottom) image
                 in
                 assembleGridHelp allImages (Tagged.Dict.remove image.id imagesById) (x + 1, y) thisMatch (Dict.insert (x, y) thisMatch acc)
 
@@ -458,15 +459,15 @@ assembleGridHelp allImages imagesById (x, y) prev acc =
 
             [] ->
                 Err ("2. Could not find a match to go at position (" ++ String.fromInt x ++ ", " ++ String.fromInt y ++ ") and after image " ++ (displayImageSides prev.image)
-                    ++ ". trying to find: " ++ String.fromInt (Tagged.untag prev.side.bottom)
+                    ++ ". trying to find: " ++ String.fromInt (Tagged.untag (flipNumber prev.side.bottom))
                     ++ "\nfound so far:\n" ++ printOutImageIdsInSolution acc)
      else
-        case (Tagged.Dict.values (Tagged.Dict.filter (\_ image -> matchesOnOneSide prev.side.right image) imagesById)) of
-        --case Maybe.andThen (\matching -> getMatchingImageForSide imagesById matching prev.side.right) (Tagged.Dict.get prev.image.id matchingSquares) of
+        case (Tagged.Dict.values (Tagged.Dict.filter (\_ image -> matchesOnOneSide (flipNumber prev.side.right) image) imagesById)) of
+        --case Maybe.andThen (\matching -> getMatchingImageForSide imagesById matching (flipNumber prev.side.right)) (Tagged.Dict.get prev.image.id matchingSquares) of
             image :: [] ->
                 let
                     thisMatch =
-                        orientToSideWithValueOf .left prev.side.right image
+                        orientToSideWithValueOf .left (flipNumber prev.side.right) image
                 in
                     assembleGridHelp allImages (Tagged.Dict.remove image.id imagesById) (x + 1, y) thisMatch (Dict.insert (x, y) thisMatch acc)
 
@@ -476,7 +477,7 @@ assembleGridHelp allImages imagesById (x, y) prev acc =
 
             [] ->
                 Err ("3. Could not find a match to go at position (" ++ String.fromInt x ++ ", " ++ String.fromInt y ++ ") and after image " ++ (displayImageSides prev.image)
-                    ++ "\ntrying to find: " ++ String.fromInt (Tagged.untag prev.side.right)
+                    ++ "\ntrying to find: " ++ String.fromInt (Tagged.untag (flipNumber prev.side.right))
                     ++ "\nfound so far:\n" ++ printOutImageIdsInSolution acc
                     ++ "\nImages with that:\n" ++ (Tagged.Dict.values allImages |> List.filter (\image -> Tagged.Set.member prev.side.right (bothSides image)) |> List.map displayImageSides |> String.join "\n")
                     ++ "\nImages with any overlap:\n" ++ (Tagged.Dict.values imagesById |> List.filter (\image -> overlappingElement prev.side.asSet (bothSides image) |> List.isEmpty |> not) |> List.map displayImageSides |> String.join "\n")

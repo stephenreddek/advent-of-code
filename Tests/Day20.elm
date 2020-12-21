@@ -13,7 +13,7 @@ import Util.Parser
 
 part1 : Test
 part1 =
-    describe "part 1"
+    skip <| describe "part 1"
         [ describe "swapIndex"
             ([ ((1,8), (1, 1))
              , ((1,1), (8, 1))
@@ -28,7 +28,7 @@ part1 =
             )
         , describe "flip number"
             [ test "back through" <|
-                \_ -> Expect.equal 27 (Tagged.untag (flipNumber (flipNumber (Tagged.tag 27))))
+                \_ -> Expect.equal 823 (Tagged.untag (flipNumber (flipNumber (Tagged.tag 27))))
             ]
         ]
 
@@ -59,8 +59,36 @@ image2797 =
 
 part2 : Test
 part2 =
-    describe "part 2"
-        [ describe "makeIntoStartingImage"
+    skip <| describe "part 2"
+        [
+        --describe "parser"
+        --    [ test "with 2797" <|
+        --        \_ ->
+        --        let
+        --            expected : Image
+        --            expected =
+        --                { id = Tagged.tag 2797
+        --                --, pixels : Array (Array Bool)
+        --                , numericRepresentation =
+        --                    ({ top : SideValue
+        --                     , bottom : SideValue
+        --                     , left : SideValue
+        --                     , right : SideValue
+        --                     , asSet : TaggedSet SideValueTag Int
+        --                     }
+        --                    ,{ top : SideValue
+        --                     , bottom : SideValue
+        --                     , left : SideValue
+        --                     , right : SideValue
+        --                     , asSet : TaggedSet SideValueTag Int
+        --                     })
+        --                }
+        --
+        --        in
+        --        Expect.equal expected image2797
+        --    ]
+        --,
+        describe "makeIntoStartingImage"
             [ test "with 2797" <|
                 \_ ->
                 let
