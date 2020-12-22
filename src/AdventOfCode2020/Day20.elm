@@ -84,12 +84,12 @@ calculateNumericRepresentation pixels =
 
         side2 =
             Array.map (Array.get 0) pixels
-                |> (Array.toList >> List.map (Maybe.withDefault False) >> Binary.fromBooleans >> Binary.toDecimal)
+                |> (Array.toList >> List.reverse >> List.map (Maybe.withDefault False) >> Binary.fromBooleans >> Binary.toDecimal)
                 |> Tagged.tag
 
         side3 =
             Array.map (Array.get (sideLength - 1)) pixels
-                |> (Array.toList >> List.reverse >> List.map (Maybe.withDefault False) >> Binary.fromBooleans >> Binary.toDecimal)
+                |> (Array.toList >> List.map (Maybe.withDefault False) >> Binary.fromBooleans >> Binary.toDecimal)
                 |> Tagged.tag
 
         side4 =
@@ -111,8 +111,8 @@ calculateNumericRepresentation pixels =
         |> Tagged.Set.insert ( side4)
     }
     , { top = (flipNumber side1)
-       , left = (flipNumber side2)
-       , right = (flipNumber side3)
+       , left = (flipNumber side3)
+       , right = (flipNumber side2)
        , bottom = (flipNumber side4)
        , asSet =
           Tagged.Set.empty
