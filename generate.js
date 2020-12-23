@@ -71,8 +71,8 @@ fs.readFile('src/Main.elm', (err, data) => {
 
   const injectionCodeIndex = code.findIndex(line => line.includes(`<< INJECT ${year} SOLUTION >>`))
   const injectionCode = [
-    `    , Tuple.pair (${options.day}, 1, ${year}) AdventOfCode${year}.Day${day}.part1`,
-    `    , Tuple.pair (${options.day}, 2, ${year}) AdventOfCode${year}.Day${day}.part2`
+    `    , Tuple.pair (${options.day}, 1, ${year}) (Result.map String.fromInt << AdventOfCode${year}.Day${day}.part1)`,
+    `    , Tuple.pair (${options.day}, 2, ${year}) (Result.map String.fromInt << AdventOfCode${year}.Day${day}.part2)`
   ]
 
   code.splice(injectionImportIndex, 0, ...injectionImport)
