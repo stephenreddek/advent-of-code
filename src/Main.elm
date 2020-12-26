@@ -24,6 +24,7 @@ import AdventOfCode2020.Day19
 import AdventOfCode2020.Day20
 import AdventOfCode2020.Day21
 import AdventOfCode2020.Day22
+import AdventOfCode2020.Day23
 -- << INJECT 2020 IMPORT >>
 
 import Dict exposing (Dict)
@@ -115,6 +116,8 @@ answerMap =
     , Tuple.pair (21, 2, 2020) AdventOfCode2020.Day21.part2
     , Tuple.pair (22, 1, 2020) (Result.map String.fromInt << AdventOfCode2020.Day22.part1)
     , Tuple.pair (22, 2, 2020) (Result.map String.fromInt << AdventOfCode2020.Day22.part2)
+    , Tuple.pair (23, 1, 2020) AdventOfCode2020.Day23.part1
+    , Tuple.pair (23, 2, 2020) (Result.map String.fromInt << AdventOfCode2020.Day23.part2)
     ] -- << INJECT 2020 SOLUTION >>
 
 -- Update ----------------------------------------------------------------------
