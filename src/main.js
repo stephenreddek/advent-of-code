@@ -52,6 +52,10 @@ try {
         if (err) console.log(err)
       })
 
+      fs.writeFile(`./data/${year}/${day}.txt`, input, err => {
+        if (err) console.log(err)
+      })
+
       startTime = process.hrtime()
       app.solve(input)
     })
