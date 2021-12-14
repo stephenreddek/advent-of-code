@@ -64,12 +64,12 @@ fs.readFile('src/Main.elm', (err, data) => {
 
   const code = data.toString().split('\n')
 
-  const injectionImportIndex = code.findIndex(line => line.includes(`<< INJECT ${year} IMPORT >>`))
+  const injectionImportIndex = code.findIndex(line => line.includes(`<< INJECT IMPORT >>`))
   const injectionImport = [
     `import AdventOfCode${year}.Day${day}`
   ]
 
-  const injectionCodeIndex = code.findIndex(line => line.includes(`<< INJECT ${year} SOLUTION >>`))
+  const injectionCodeIndex = code.findIndex(line => line.includes(`<< INJECT SOLUTION >>`))
   const injectionCode = [
     `    , Tuple.pair (${options.day}, 1, ${year}) (Result.map String.fromInt << AdventOfCode${year}.Day${day}.part1)`,
     `    , Tuple.pair (${options.day}, 2, ${year}) (Result.map String.fromInt << AdventOfCode${year}.Day${day}.part2)`

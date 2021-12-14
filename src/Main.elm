@@ -25,7 +25,8 @@ import AdventOfCode2020.Day20
 import AdventOfCode2020.Day21
 import AdventOfCode2020.Day22
 import AdventOfCode2020.Day23
--- << INJECT 2020 IMPORT >>
+import AdventOfCode2019.Day01
+-- << INJECT IMPORT >>
 
 import Dict exposing (Dict)
 import Json.Encode
@@ -118,7 +119,9 @@ answerMap =
     , Tuple.pair (22, 2, 2020) (Result.map String.fromInt << AdventOfCode2020.Day22.part2)
     , Tuple.pair (23, 1, 2020) AdventOfCode2020.Day23.part1
     , Tuple.pair (23, 2, 2020) (Result.map String.fromInt << AdventOfCode2020.Day23.part2)
-    ] -- << INJECT 2020 SOLUTION >>
+    , Tuple.pair (1, 1, 2019) (Result.map String.fromInt << AdventOfCode2019.Day01.part1)
+    , Tuple.pair (1, 2, 2019) (Result.map String.fromInt << AdventOfCode2019.Day01.part2)
+    ] -- << INJECT SOLUTION >>
 
 -- Update ----------------------------------------------------------------------
 update : Question -> Cmd Never
