@@ -72,10 +72,7 @@ pub fn part2() -> usize {
 
             for _ow in 0..6 {
                 for column in 0..40 {
-                    if (column == register_x - 1
-                        || column == register_x
-                        || column == register_x + 1)
-                    {
+                    if register_x.abs_diff(column) <= 1 {
                         print!("#");
                     } else {
                         print!(".");
