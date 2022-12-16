@@ -1,11 +1,11 @@
-mod day15;
+mod day16_2;
 
 fn main() {
-    let day15_part1 = day15::part1();
-    let day15_part2 = day15::part2();
+    let day16_part1 = day16_2::part1();
+    let day16_part2 = day16_2::part2();
     std::println!(
-        "Day15: part 1 \"{}\" part 2 \"{}\"",
-        day15_part1,
-        day15_part2
+        "Day16: part 1 \"{}\" part 2 \"{}\"",
+        day16_part1,
+        day16_part2
     );
 }
