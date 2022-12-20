@@ -1,11 +1,13 @@
-mod day18;
+#![feature(int_roundings)]
+
+mod day19;
 
 fn main() {
-    let day18_part1 = day18::part1();
-    let day18_part2 = day18::part2();
+    let day19_part1 = day19::part1();
+    let day19_part2 = day19::part2();
     std::println!(
-        "Day18: part 1 \"{}\" part 2 \"{}\"",
-        day18_part1,
-        day18_part2
+        "Day19: part 1 \"{}\" part 2 \"{}\"",
+        day19_part1,
+        day19_part2
     );
 }
