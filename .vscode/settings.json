@@ -2,5 +2,7 @@
     "rust-analyzer.checkOnSave.command": "clippy",
     "cSpell.words": [
         "Deque"
-    ]
+    ],
+    "mypy.configFile": "python-2023/mypy.ini",
+    "mypy.dmypyExecutable": "/Users/stephen/Library/Python/3.9/bin/dmypy"
 }
